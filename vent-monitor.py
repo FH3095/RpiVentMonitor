@@ -6,7 +6,7 @@ import argparse
 import sys
 
 VERSION = '1.0'
-SLEEP_TIME = 5
+SLEEP_TIME = 30
 
 def parseArguments():
 	parser = argparse.ArgumentParser()
@@ -19,7 +19,7 @@ def parseArguments():
 
 def readTemp():
 	with open('/sys/class/thermal/thermal_zone0/temp') as file:
-		return int(file.read()) / 1000
+		return int(int(file.read()) / 1000)
 
 args = parseArguments()
 if args.tempOn <= args.tempOff:
@@ -36,9 +36,9 @@ with gpiod.Chip(args.chip, gpiod.Chip.OPEN_BY_NAME) as chip:
 		if curTemp >= args.tempOn and ventOn != True:
 			ventLine.set_value(1)
 			ventOn = True
-			print("Temp", curTemp, "is above", args.tempOn, ". Ventilator enabled.")
+			print("Temperature is", curTemp, ". Ventilator enabled.")
 		elif curTemp <= args.tempOff and ventOn != False:
 			ventLine.set_value(0)
 			ventOn = False
-			print("Temp", curTemp, "is below", args.tempOff, ". Ventilator disabled.")
+			print("Temperature is", curTemp, ". Ventilator disabled.")
 		time.sleep(SLEEP_TIME)
