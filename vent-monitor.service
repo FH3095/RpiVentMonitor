@@ -1,0 +1,7 @@
+[Service]
+EnvironmentFile=/etc/vent-monitor.conf
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/local/sbin/vent-monitor.py --chip $CHIP --line $LINE --temp-on $TEMP_ON --temp-off $TEMP_OFF
+
+[Install]
+WantedBy=multi-user.target
