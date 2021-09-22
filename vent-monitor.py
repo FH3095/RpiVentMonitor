@@ -13,8 +13,8 @@ def parseArguments():
 	parser.add_argument('--version', action='version', version='%(prog)s '+VERSION)
 	parser.add_argument('--chip', dest='chip', required=True, help='gpio chip, see gpioinfo')
 	parser.add_argument('--line', dest='line', required=True, type=int, help='gpio line, see gpioinfo')
-	parser.add_argument('--temp-on', dest='tempOn', required=True, type=int, help='temperature to start ventilator')
-	parser.add_argument('--temp-off', dest='tempOff', required=True, type=int, help='temperature to stop ventilator. Must be smaller than --temp-on')
+	parser.add_argument('--temp-on', dest='tempOn', required=True, type=int, help='temperature to start fan')
+	parser.add_argument('--temp-off', dest='tempOff', required=True, type=int, help='temperature to stop fan. Must be smaller than --temp-on')
 	return parser.parse_args()
 
 def readTemp():
@@ -28,7 +28,7 @@ if args.tempOn <= args.tempOff:
 
 with gpiod.Chip(args.chip, gpiod.Chip.OPEN_BY_NAME) as chip:
 	ventLine = chip.get_line(args.line)
-	ventLine.request("VentilatorManagement", gpiod.LINE_REQ_DIR_OUT)
+	ventLine.request("FanManagement", gpiod.LINE_REQ_DIR_OUT)
 	
 	ventOn = None
 	while True:
@@ -36,9 +36,9 @@ with gpiod.Chip(args.chip, gpiod.Chip.OPEN_BY_NAME) as chip:
 		if curTemp >= args.tempOn and ventOn != True:
 			ventLine.set_value(1)
 			ventOn = True
-			print("Temperature is", curTemp, ". Ventilator enabled.")
+			print("Temperature is", curTemp, ". Fan enabled.")
 		elif curTemp <= args.tempOff and ventOn != False:
 			ventLine.set_value(0)
 			ventOn = False
-			print("Temperature is", curTemp, ". Ventilator disabled.")
+			print("Temperature is", curTemp, ". Fan disabled.")
 		time.sleep(SLEEP_TIME)
