@@ -6,7 +6,7 @@ import argparse
 import sys
 
 VERSION = '1.0'
-SLEEP_TIME = 30
+SLEEP_TIME = 5
 
 def parseArguments():
 	parser = argparse.ArgumentParser()
